@@ -26,21 +26,51 @@ function render(variables = {}) {
   console.log("These are the current variables: ", variables); // print on the console
   // here we ask the logical questions to make decisions on how to build the html
   // if includeCover==false then we reset the cover code without the <img> tag to make the cover transparent.
-  let cover = `<div class="cover"><img src="${variables.background}" /></div>`;
-  if (variables.includeCover == false) cover = "<div class='cover'></div>";
+  //
+  // if (variables.includeCover == false) cover = "<div class='cover'></div>";
 
+  let contentWithoutImg = function(key) {
+    if (key === "includeCover") {
+      return variables[key] === false
+        ? "<div class='cover'></div>"
+        : `<div class="cover"><img src="${variables.background}" /></div>`;
+    }
+    if (key === "avatarURL") {
+      return variables[key] === ""
+        ? "<div></div>"
+        : `<img src="${variables.avatarURL}" class="photo" />`;
+    }
+  };
+
+  let cover = contentWithoutImg("includeCover");
+
+  // let cover = `<div class="cover"><img src="${variables.background}" /></div>`;
+  // if (variables.includeCover == false) cover = "<div class='cover'></div>";
+
+  let contentIfNotNull = function(key) {
+    return variables[key] === null ? "" : variables[key];
+  };
+  //<img src="${variables.avatarURL}" class="photo" />
   // reset the website body with the new html output
   document.querySelector("#widget_content").innerHTML = `<div class="widget">
             ${cover}
-          <img src="${variables.avatarURL}" class="photo" />
-          <h1>Lucy Boilett</h1>
-          <h2>Web Developer</h2>
-          <h3>Miami, USA</h3>
-          <ul class="position-right">
-            <li><a href="https://twitter.com/4geeksacademy"><i class="fab fa-twitter"></i></a></li>
-            <li><a href="https://github.com/4geeksacademy"><i class="fab fa-github"></i></a></li>
-            <li><a href="https://linkedin.com/school/4geeksacademy"><i class="fab fa-linkedin"></i></a></li>
-            <li><a href="https://instagram.com/4geeksacademy"><i class="fab fa-instagram"></i></a></li>
+          <div class="avatar">${contentWithoutImg("avatarURL")}</div>
+          <h1>${contentIfNotNull("name")} ${contentIfNotNull("lastName")}</h1>
+          <h2>${contentIfNotNull("role")}</h2>
+          <h3>${contentIfNotNull("city")}, ${contentIfNotNull("country")}</h3>
+          <ul class="${contentIfNotNull("socialMediaPosition")}">
+            <li><a href="https://twitter.com/${contentIfNotNull(
+              "twitter"
+            )}" target="_blank"><i class="fab fa-twitter"></i></a></li>
+            <li><a href="https://github.com/${contentIfNotNull(
+              "github"
+            )}" target="_blank"><i class="fab fa-github"></i></a></li>
+            <li><a href="https://linkedin.com/${contentIfNotNull(
+              "linkedin"
+            )}" target="_blank"><i class="fab fa-linkedin"></i></a></li>
+            <li><a href="https://instagram.com/${contentIfNotNull(
+              "instagram"
+            )}" target="_blank"><i class="fab fa-instagram"></i></a></li>
           </ul>
         </div>
     `;
